@@ -19,14 +19,6 @@ function Navbar() {
       <Link to="/purchases" style={{ color: "#fff", marginRight: "10px" }}>
         Purchases
       </Link>
-
-      <Link to="/inventory" style={{ color: "#fff", marginRight: "10px" }}>
-        Inventory
-      </Link>
-
-      <Link to="/expenses" style={{ color: "#fff" }}>
-        Expenses
-      </Link>
     </nav>
   );
 }

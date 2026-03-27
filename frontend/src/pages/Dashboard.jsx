@@ -42,6 +42,11 @@ function Dashboard() {
           </div>
 
           <div style={{ padding: "20px", border: "1px solid #ccc", width: "220px" }}>
+            <h3>Low Stock</h3>
+            <p>{summary.low_stock_products}</p>
+          </div>
+
+          <div style={{ padding: "20px", border: "1px solid #ccc", width: "220px" }}>
             <h3>Total Categories</h3>
             <p>{summary.total_categories}</p>
           </div>
