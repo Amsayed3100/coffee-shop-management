@@ -1,14 +1,18 @@
-# Coffee Shop Management System
+Coffee Shop Management System
 
-## Overview
-This project helps manage inventory, sales, and suppliers for a coffee shop.
+#Overview
+Small and independent coffee shops frequently rely on manual methods to manage their dayto- day business operations, including inventory tracking, supplier management, expense recording, and product cataloging. These manual processes are not only time-consuming but also prone to human error, data loss, and operational inefficiencies.
 
-## Features
-- Dashboard
-- Inventory Management
-- Supplier Management
-- Expense Tracking
 
-## Tech Stack
-- React
-- Django
+#Features
+-Dashboard
+-Inventory Management
+-Supplier Management
+-Expense Tracking
+-Products
+-Purchases
+
+#Tech Stack
+React
+Responsive desing
+Django

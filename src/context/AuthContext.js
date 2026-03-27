@@ -1,24 +1,25 @@
-import { createContext, useState } from "react";
-import API from "../api/axios";
+import { createContext, useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
-  const login = async (data) => {
-    const res = await API.post("/auth/login/", data);
-
-    localStorage.setItem("token", res.data.access);
-    localStorage.setItem("role", res.data.user.role);
-
-    setUser(res.data.user);
+  const login = ({ username, password }) => {
+    // Mock login validation
+    if (username && password) { // এখানে তুমি চাইলে specific check করতে পারো
+      setUser({ username });
+      navigate("/dashboard"); // Login successful → Dashboard
+    } else {
+      alert("Enter username and password");
+    }
   };
 
   const logout = () => {
-    localStorage.clear();
     setUser(null);
-    window.location.href = "/login";
+    navigate("/");
   };
 
   return (
@@ -26,6 +27,6 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const getRole = () => localStorage.getItem("role");
+export const useAuth = () => useContext(AuthContext);

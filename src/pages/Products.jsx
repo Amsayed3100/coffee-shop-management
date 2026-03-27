@@ -1,67 +1,66 @@
 import { useEffect, useState } from "react";
-import API from "../api/axios";
+import api from "../api/axios";
 
-const Products = () => {
+export default function Products() {
+  const [products, setProducts] = useState([]);
+  const [form, setForm] = useState({ name: "", price: "" });
+  const [editingId, setEditingId] = useState(null);
 
-  const [data, setData] = useState([]);
-  const [name, setName] = useState("");
-
-  const fetch = async () => {
-    const res = await API.get("/products/");
-    setData(res.data);
+  const fetchProducts = async () => {
+    const res = await api.get("/products/");
+    setProducts(res.data);
   };
 
-  const add = async () => {
-    if(!name) return;
-    await API.post("/products/", { name });
-    setName("");
-    fetch();
+  useEffect(() => { fetchProducts(); }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (editingId) {
+      await api.put(`/products/${editingId}/`, form);
+    } else {
+      await api.post("/products/", form);
+    }
+    setForm({ name: "", price: "" });
+    setEditingId(null);
+    fetchProducts();
   };
 
-  const del = async (id) => {
-    await API.delete(`/products/${id}/`);
-    fetch();
+  const handleEdit = (product) => {
+    setForm({ name: product.name, price: product.price });
+    setEditingId(product.id);
   };
 
-  useEffect(()=>{ fetch(); },[]);
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this product?")) return;
+    await api.delete(`/products/${id}/`);
+    fetchProducts();
+  };
 
   return (
-    <div className="container mt-4">
-      <div className="card p-3">
-
-        <h3>Products</h3>
-
-        <div className="d-flex gap-2 my-3">
-          <input className="form-control"
-            value={name}
-            onChange={(e)=>setName(e.target.value)}
-            placeholder="Product name"
-          />
-          <button className="btn btn-primary" onClick={add}>Add</button>
-        </div>
-
-        <table className="table">
-          <thead>
-            <tr><th>ID</th><th>Name</th><th></th></tr>
-          </thead>
-
-          <tbody>
-            {data.map(p=>(
-              <tr key={p.id}>
-                <td>{p.id}</td>
-                <td>{p.name}</td>
-                <td>
-                  <button className="btn btn-danger btn-sm"
-                    onClick={()=>del(p.id)}>Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-      </div>
+    <div className="page">
+      <h1>Products</h1>
+      <form onSubmit={handleSubmit}>
+        <input placeholder="Name" value={form.name} onChange={e => setForm({...form,name:e.target.value})} required />
+        <input type="number" placeholder="Price" value={form.price} onChange={e => setForm({...form,price:e.target.value})} required />
+        <button>{editingId ? "Update" : "Add"}</button>
+      </form>
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Price</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          {products.map(p => (
+            <tr key={p.id}>
+              <td>{p.name}</td>
+              <td>{p.price}</td>
+              <td>
+                <button onClick={()=>handleEdit(p)}>Edit</button>
+                <button onClick={()=>handleDelete(p.id)}>Delete</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
-};
-
-export default Products;
+}

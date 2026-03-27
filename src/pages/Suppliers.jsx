@@ -1,58 +1,68 @@
 import { useEffect, useState } from "react";
-import API from "../api/axios";
+import api from "../api/axios";
 
-const Suppliers = () => {
+export default function Suppliers() {
+  const [suppliers, setSuppliers] = useState([]);
+  const [form, setForm] = useState({ name:"", contact:"", email:"" });
+  const [editingId, setEditingId] = useState(null);
 
-  const [data, setData] = useState([]);
-  const [name, setName] = useState("");
-
-  const fetch = async () => {
-    const res = await API.get("/suppliers/");
-    setData(res.data);
+  const fetchSuppliers = async () => {
+    const res = await api.get("/suppliers/");
+    setSuppliers(res.data);
   };
 
-  const add = async () => {
-    await API.post("/suppliers/", { name });
-    setName("");
-    fetch();
+  useEffect(()=>{ fetchSuppliers(); }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if(editingId){
+      await api.put(`/suppliers/${editingId}/`, form);
+    } else {
+      const res = await api.post("/suppliers/", form);
+      setSuppliers([...suppliers, res.data]);
+    }
+    setForm({ name:"", contact:"", email:"" });
+    setEditingId(null);
   };
 
-  const del = async (id) => {
-    await API.delete(`/suppliers/${id}/`);
-    fetch();
+  const handleEdit = (s) => {
+    setForm({ name:s.name, contact:s.contact, email:s.email });
+    setEditingId(s.id);
   };
 
-  useEffect(()=>{ fetch(); },[]);
+  const handleDelete = async (id) => {
+    await api.delete(`/suppliers/${id}/`);
+    setSuppliers(suppliers.filter(s=>s.id!==id));
+  };
 
   return (
-    <div className="container mt-4">
-      <div className="card p-3">
+    <div className="page">
+      <h1>Suppliers</h1>
+      <form onSubmit={handleSubmit}>
+        <input placeholder="Name" value={form.name} onChange={e=>setForm({...form,name:e.target.value})} required/>
+        <input placeholder="Contact" value={form.contact} onChange={e=>setForm({...form,contact:e.target.value})} required/>
+        <input placeholder="Email" type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} required/>
+        <button>{editingId ? "Update":"Add"}</button>
+      </form>
 
-        <h3>Suppliers</h3>
-
-        <div className="d-flex gap-2 my-3">
-          <input className="form-control"
-            value={name}
-            onChange={(e)=>setName(e.target.value)}
-            placeholder="Supplier name"
-          />
-          <button className="btn btn-primary" onClick={add}>Add</button>
-        </div>
-
-        <ul className="list-group">
-          {data.map(s=>(
-            <li key={s.id} className="list-group-item d-flex justify-content-between">
-              {s.name}
-              <button className="btn btn-danger btn-sm" onClick={()=>del(s.id)}>
-                Delete
-              </button>
-            </li>
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Contact</th><th>Email</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          {suppliers.map(s=>(
+            <tr key={s.id}>
+              <td>{s.name}</td>
+              <td>{s.contact}</td>
+              <td>{s.email}</td>
+              <td>
+                <button onClick={()=>handleEdit(s)}>Edit</button>
+                <button onClick={()=>handleDelete(s.id)}>Delete</button>
+              </td>
+            </tr>
           ))}
-        </ul>
-
-      </div>
+        </tbody>
+      </table>
     </div>
   );
-};
-
-export default Suppliers;
+}
