@@ -9,7 +9,7 @@ function Navbar() {
       </Link>
 
       <Link to="/products" style={{ color: "#fff", marginRight: "10px" }}>
-        Products
+        
       </Link>
 
       <Link to="/suppliers" style={{ color: "#fff", marginRight: "10px" }}>
