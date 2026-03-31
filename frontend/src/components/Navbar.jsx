@@ -5,7 +5,11 @@ function Navbar() {
   return (
     <nav style={{ padding: "10px", background: "#333" }}>
       <Link to="/" style={{ color: "#fff", marginRight: "10px" }}>
+ frontend-update-clean
        Dashboard
+
+        Deshboard
+ main
       </Link>
 
       <Link to="/products" style={{ color: "#fff", marginRight: "10px" }}>
